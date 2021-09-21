@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_practice_app/widgets/chart.dart';
+import 'package:flutter/services.dart';
+
 import './models/transaction.dart';
 import './widgets/add_transaction.dart';
 import './widgets/transaction_list.dart';
 import './widgets/chart.dart';
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 
@@ -22,8 +27,8 @@ class MyApp extends StatelessWidget {
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             textStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.secondary),
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         fontFamily: 'Glory',
@@ -88,57 +93,114 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final appBar = AppBar(
+      title: Text('Expenses manager'),
+      backgroundColor: Theme.of(context).primaryColor,
+      actions: <Widget>[
+        IconButton(
+          onPressed: () => _popUpAddTransaction(context),
+          icon: Icon(Icons.add),
+        ),
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Expenses manager'),
-        backgroundColor: Theme.of(context).primaryColor,
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => _popUpAddTransaction(context),
-            icon: Icon(Icons.add),
-          ),
-        ],
-      ),
-      body: _userTransactions.isEmpty
-          ? Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    child: Text(
-                      'No transaction added yet !',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  SizedBox(
-                    height: 200,
-                    child: Image.asset(
-                      'assets/images/clipart109487.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : Column(
-              //mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Chart(transaction: _recentTransaction),
-                TransactionList(
-                  transaction: _userTransactions,
-                  remove: _removeTransaction,
-                ),
+      appBar: appBar,
+      body: Column(
+        children: [
+          if (isLandscape)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Show chart'),
+                Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() => _showChart = val);
+                    }),
               ],
             ),
+          _userTransactions.isEmpty
+              ? Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Text(
+                          'No transaction added yet !',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      SizedBox(
+                        height: 200,
+                        child: Image.asset(
+                          'assets/images/clipart109487.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Container(
+                  child: isLandscape
+                      ? Column(
+                          children: [
+                            if (_showChart)
+                              Container(
+                                  height: (MediaQuery.of(context).size.height -
+                                          appBar.preferredSize.height -
+                                          MediaQuery.of(context).padding.top) *
+                                      0.7,
+                                  child:
+                                      Chart(transaction: _recentTransaction)),
+                            if (!_showChart)
+                              Container(
+                                height: (MediaQuery.of(context).size.height -
+                                        appBar.preferredSize.height -
+                                        MediaQuery.of(context).padding.top) *
+                                    0.7,
+                                child: TransactionList(
+                                  transaction: _userTransactions,
+                                  remove: _removeTransaction,
+                                ),
+                              ),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            Container(
+                                height: (MediaQuery.of(context).size.height -
+                                        appBar.preferredSize.height -
+                                        MediaQuery.of(context).padding.top) *
+                                    0.3,
+                                child: Chart(transaction: _recentTransaction)),
+                            Container(
+                              height: (MediaQuery.of(context).size.height -
+                                      appBar.preferredSize.height -
+                                      MediaQuery.of(context).padding.top) *
+                                  0.7,
+                              child: TransactionList(
+                                transaction: _userTransactions,
+                                remove: _removeTransaction,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+        ],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _popUpAddTransaction(context),
