@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_practice_app/widgets/chart.dart';
-import 'package:flutter/services.dart';
 
 import './models/transaction.dart';
 import './widgets/add_transaction.dart';
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            textStyle: TextStyle(
+            textStyle: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -42,7 +41,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -89,23 +88,38 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Transaction> get _recentTransaction {
     return _userTransactions.where((element) {
-      return element.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+      return element.date
+          .isAfter(DateTime.now().subtract(const Duration(days: 7)));
     }).toList();
   }
 
   bool _showChart = false;
+
+  Widget _buildLandscape() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Show chart'),
+        Switch(
+            value: _showChart,
+            onChanged: (val) {
+              setState(() => _showChart = val);
+            }),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final appBar = AppBar(
-      title: Text('Expenses manager'),
+      title: const Text('Expenses manager'),
       backgroundColor: Theme.of(context).primaryColor,
       actions: <Widget>[
         IconButton(
           onPressed: () => _popUpAddTransaction(context),
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
         ),
       ],
     );
@@ -113,26 +127,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: appBar,
       body: Column(
         children: [
-          if (isLandscape)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Show chart'),
-                Switch(
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() => _showChart = val);
-                    }),
-              ],
-            ),
+          if (isLandscape) _buildLandscape(),
           _userTransactions.isEmpty
               ? Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Text(
+                        margin: const EdgeInsets.only(top: 10),
+                        child: const Text(
                           'No transaction added yet !',
                           style: TextStyle(
                             fontSize: 20,
@@ -140,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       SizedBox(
@@ -204,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _popUpAddTransaction(context),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
     );

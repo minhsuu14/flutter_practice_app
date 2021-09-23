@@ -50,7 +50,7 @@ class Chart extends StatelessWidget {
         ),
       ),
       elevation: 5,
-      margin: EdgeInsets.symmetric(vertical: 15),
+      margin: const EdgeInsets.symmetric(vertical: 15),
     );
   }
 }

@@ -3,7 +3,8 @@ import 'package:intl/intl.dart';
 
 class AddTransaction extends StatefulWidget {
   final Function addNewTransaction;
-  AddTransaction({Key? key, required this.addNewTransaction}) : super(key: key);
+  const AddTransaction({Key? key, required this.addNewTransaction})
+      : super(key: key);
 
   @override
   State<AddTransaction> createState() => _AddTransactionState();
@@ -46,19 +47,19 @@ class _AddTransactionState extends State<AddTransaction> {
     return Card(
       elevation: 5,
       child: Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Title',
               ),
               controller: _titleController,
               onSubmitted: (_) => _submitData(),
             ),
             TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Amount',
               ),
               keyboardType: TextInputType.number,
@@ -75,17 +76,17 @@ class _AddTransactionState extends State<AddTransaction> {
                   ),
                 ),
                 TextButton(
-                  child: Text('Pick a date'),
+                  child: const Text('Pick a date'),
                   onPressed: _datePicker,
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextButton(
               onPressed: _submitData,
-              child: Text('Add new transaction'),
+              child: const Text('Add new transaction'),
             ),
           ],
         ),
